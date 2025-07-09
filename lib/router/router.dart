@@ -1,5 +1,5 @@
-import 'package:dio_security_and_caching/feature/home/home_screen.dart';
-import 'package:dio_security_and_caching/feature/splash/splash_screen.dart';
+import 'package:dio_security_and_caching/presentation/home/home_screen.dart';
+import 'package:dio_security_and_caching/presentation/splash/splash_screen.dart';
 import 'package:dio_security_and_caching/router/router_path.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';

@@ -10,6 +10,13 @@
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'package:dio/dio.dart' as _i361;
+import 'package:dio_security_and_caching/common/data/datasource/auth_datasoure.dart'
+    as _i1000;
+import 'package:dio_security_and_caching/common/data/repository/auth_repository_impl.dart'
+    as _i110;
+import 'package:dio_security_and_caching/common/domain/repository/auth_repository.dart'
+    as _i1013;
+import 'package:dio_security_and_caching/environment/api_config.dart' as _i367;
 import 'package:dio_security_and_caching/router/router.dart' as _i121;
 import 'package:dio_security_and_caching/util/dio/dio.dart' as _i213;
 import 'package:dio_security_and_caching/util/secure_storage_util.dart'
@@ -18,6 +25,10 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
 import 'package:injectable/injectable.dart' as _i526;
+
+const String _dev = 'dev';
+const String _qa = 'qa';
+const String _prod = 'prod';
 
 extension GetItInjectableX on _i174.GetIt {
   // initializes the registration of main-scope dependencies inside of GetIt
@@ -29,6 +40,8 @@ extension GetItInjectableX on _i174.GetIt {
     final secureStorageModule = _$SecureStorageModule();
     final dioModule = _$DioModule();
     final routerModule = _$RouterModule();
+    final apiModule = _$ApiModule();
+    final authDataSourceModule = _$AuthDataSourceModule();
     gh.singleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.createSecureStorage(),
     );
@@ -36,6 +49,25 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i583.GoRouter>(() => routerModule.router);
     gh.singleton<_i866.SecureStorageUtil>(
       () => _i866.SecureStorageUtil(gh<_i558.FlutterSecureStorage>()),
+    );
+    gh.singleton<_i367.Api>(
+      () => apiModule.createDevBaseUrl(),
+      registerFor: {_dev},
+    );
+    gh.singleton<_i367.Api>(
+      () => apiModule.createQaBaseUrl(),
+      registerFor: {_qa},
+    );
+    gh.lazySingleton<_i1013.AuthRepository>(() => _i110.AuthRepositoryImpl());
+    gh.singleton<_i367.Api>(
+      () => apiModule.createProdBaseUrl(),
+      registerFor: {_prod},
+    );
+    gh.singleton<_i1000.AuthDataSource>(
+      () => authDataSourceModule.provideAuthDataSource(
+        gh<_i361.Dio>(),
+        gh<_i367.Api>(),
+      ),
     );
     return this;
   }
@@ -46,3 +78,7 @@ class _$SecureStorageModule extends _i866.SecureStorageModule {}
 class _$DioModule extends _i213.DioModule {}
 
 class _$RouterModule extends _i121.RouterModule {}
+
+class _$ApiModule extends _i367.ApiModule {}
+
+class _$AuthDataSourceModule extends _i1000.AuthDataSourceModule {}
