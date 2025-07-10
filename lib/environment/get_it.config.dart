@@ -24,11 +24,11 @@ import 'package:dio_security_and_caching/common/domain/usecase/auth_usecase.dart
     as _i145;
 import 'package:dio_security_and_caching/common/domain/usecase/user_usecase.dart'
     as _i410;
+import 'package:dio_security_and_caching/core/util/dio/dio.dart' as _i14;
+import 'package:dio_security_and_caching/core/util/secure_storage_util.dart'
+    as _i347;
 import 'package:dio_security_and_caching/environment/api_config.dart' as _i367;
 import 'package:dio_security_and_caching/router/router.dart' as _i121;
-import 'package:dio_security_and_caching/util/dio/dio.dart' as _i213;
-import 'package:dio_security_and_caching/util/secure_storage_util.dart'
-    as _i866;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart' as _i558;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:go_router/go_router.dart' as _i583;
@@ -45,19 +45,19 @@ extension GetItInjectableX on _i174.GetIt {
     _i526.EnvironmentFilter? environmentFilter,
   }) {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
+    final routerModule = _$RouterModule();
     final secureStorageModule = _$SecureStorageModule();
     final dioModule = _$DioModule();
-    final routerModule = _$RouterModule();
     final apiModule = _$ApiModule();
     final authDataSourceModule = _$AuthDataSourceModule();
+    gh.singleton<_i583.GoRouter>(() => routerModule.router);
     gh.singleton<_i558.FlutterSecureStorage>(
       () => secureStorageModule.createSecureStorage(),
     );
     gh.singleton<_i361.Dio>(() => dioModule.createClientDio());
-    gh.singleton<_i583.GoRouter>(() => routerModule.router);
     gh.lazySingleton<_i836.UserRepository>(() => _i942.UserRepositoryImpl());
-    gh.singleton<_i866.SecureStorageUtil>(
-      () => _i866.SecureStorageUtil(gh<_i558.FlutterSecureStorage>()),
+    gh.singleton<_i347.SecureStorageUtil>(
+      () => _i347.SecureStorageUtil(gh<_i558.FlutterSecureStorage>()),
     );
     gh.singleton<_i367.Api>(
       () => apiModule.createDevBaseUrl(),
@@ -70,7 +70,6 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i410.UserUsecase>(
       () => _i410.UserUsecase(gh<_i836.UserRepository>()),
     );
-    gh.lazySingleton<_i1013.AuthRepository>(() => _i110.AuthRepositoryImpl());
     gh.singleton<_i367.Api>(
       () => apiModule.createProdBaseUrl(),
       registerFor: {_prod},
@@ -81,18 +80,24 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i367.Api>(),
       ),
     );
+    gh.lazySingleton<_i1013.AuthRepository>(
+      () => _i110.AuthRepositoryImpl(gh<_i1000.AuthDataSource>()),
+    );
     gh.lazySingleton<_i145.AuthUsecase>(
-      () => _i145.AuthUsecase(gh<_i1013.AuthRepository>()),
+      () => _i145.AuthUsecase(
+        gh<_i1013.AuthRepository>(),
+        gh<_i347.SecureStorageUtil>(),
+      ),
     );
     return this;
   }
 }
 
-class _$SecureStorageModule extends _i866.SecureStorageModule {}
-
-class _$DioModule extends _i213.DioModule {}
-
 class _$RouterModule extends _i121.RouterModule {}
+
+class _$SecureStorageModule extends _i347.SecureStorageModule {}
+
+class _$DioModule extends _i14.DioModule {}
 
 class _$ApiModule extends _i367.ApiModule {}
 

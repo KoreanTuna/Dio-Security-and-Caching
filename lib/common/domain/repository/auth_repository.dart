@@ -1,8 +1,8 @@
-import 'package:dio_security_and_caching/common/data/models/token_model.dart';
-import 'package:dio_security_and_caching/util/result.dart';
+import 'package:dio_security_and_caching/common/domain/entities/token_entity.dart';
+import 'package:dio_security_and_caching/core/util/result.dart';
 
 abstract interface class AuthRepository {
-  Future<Result<TokenModel>> login({
+  Future<Result<TokenEntity>> login({
     required String username,
     required String password,
   });

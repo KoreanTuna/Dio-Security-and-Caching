@@ -2,8 +2,8 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:dio_cache_interceptor/dio_cache_interceptor.dart';
-import 'package:dio_security_and_caching/util/logger.dart';
-import 'package:dio_security_and_caching/util/secure_storage_util.dart';
+import 'package:dio_security_and_caching/core/util/logger.dart';
+import 'package:dio_security_and_caching/core/util/secure_storage_util.dart';
 import 'package:injectable/injectable.dart';
 import 'package:pretty_dio_logger/pretty_dio_logger.dart';
 import 'package:crypto/crypto.dart';
