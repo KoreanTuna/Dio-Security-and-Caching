@@ -14,8 +14,16 @@ import 'package:dio_security_and_caching/common/data/datasource/auth_datasoure.d
     as _i1000;
 import 'package:dio_security_and_caching/common/data/repository/auth_repository_impl.dart'
     as _i110;
+import 'package:dio_security_and_caching/common/data/repository/user_repository_impl.dart'
+    as _i942;
 import 'package:dio_security_and_caching/common/domain/repository/auth_repository.dart'
     as _i1013;
+import 'package:dio_security_and_caching/common/domain/repository/user_repository.dart'
+    as _i836;
+import 'package:dio_security_and_caching/common/domain/usecase/auth_usecase.dart'
+    as _i145;
+import 'package:dio_security_and_caching/common/domain/usecase/user_usecase.dart'
+    as _i410;
 import 'package:dio_security_and_caching/environment/api_config.dart' as _i367;
 import 'package:dio_security_and_caching/router/router.dart' as _i121;
 import 'package:dio_security_and_caching/util/dio/dio.dart' as _i213;
@@ -47,6 +55,7 @@ extension GetItInjectableX on _i174.GetIt {
     );
     gh.singleton<_i361.Dio>(() => dioModule.createClientDio());
     gh.singleton<_i583.GoRouter>(() => routerModule.router);
+    gh.lazySingleton<_i836.UserRepository>(() => _i942.UserRepositoryImpl());
     gh.singleton<_i866.SecureStorageUtil>(
       () => _i866.SecureStorageUtil(gh<_i558.FlutterSecureStorage>()),
     );
@@ -58,6 +67,9 @@ extension GetItInjectableX on _i174.GetIt {
       () => apiModule.createQaBaseUrl(),
       registerFor: {_qa},
     );
+    gh.lazySingleton<_i410.UserUsecase>(
+      () => _i410.UserUsecase(gh<_i836.UserRepository>()),
+    );
     gh.lazySingleton<_i1013.AuthRepository>(() => _i110.AuthRepositoryImpl());
     gh.singleton<_i367.Api>(
       () => apiModule.createProdBaseUrl(),
@@ -68,6 +80,9 @@ extension GetItInjectableX on _i174.GetIt {
         gh<_i361.Dio>(),
         gh<_i367.Api>(),
       ),
+    );
+    gh.lazySingleton<_i145.AuthUsecase>(
+      () => _i145.AuthUsecase(gh<_i1013.AuthRepository>()),
     );
     return this;
   }
